@@ -110,9 +110,9 @@ public class HelloApplication extends Application {
 //        start(new Stage());
     }
 
-//    private void handleDropButtonClick(int col) {
-//
-//    }
+    private void handleDropButtonClick(int col) {
+
+    }
 
     public static void main(String[] args) {
         launch(args);
