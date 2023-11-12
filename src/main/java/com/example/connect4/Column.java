@@ -7,7 +7,7 @@ public class Column {
     short cells;
 
     public Column(){
-        length = 7;
+        length = 6;
         cells = 0;
         filledCells = 0;
     }
