@@ -12,7 +12,16 @@ public class TreeNode {
         this.isMax = isMax;
     }
 
-    private TreeNode[] getChildren(){
+    public TreeNode[] getChildren(){
+        boolean isCreated = false;
+        for (int i = 0; i < children.length; i++) {
+            if(children[i] != null){
+                isCreated = true;
+            }
+        }
+        if(isCreated){
+            return children;
+        }
         TreeNode[] children = new TreeNode[7];
         State[] nextStates = this.state.getNeighbours();
         for (int i = 0; i < 7; i++) {
