@@ -12,7 +12,7 @@ public class Board {
         this.turn = 2;
     }
 
-    public Boolean playTurn(int columnNum){
+    public Boolean play(int columnNum){
         if(columns[columnNum].add(turn)){
             if(turn == 1)
                 turn = 2;
@@ -42,18 +42,20 @@ public class Board {
                 }
             }
         }
+        //System.out.println("h " + count);
 
         // Check vertically
         for (int i = 0; i <= rows - 4; i++) {
             for (int j = 0; j < cols; j++) {
-                if (columns[j].get(i + 1) == player &&
+                if (columns[j].get(i) == player &&
+                        columns[j].get(i + 1) == player &&
                         columns[j].get(i + 2) == player &&
-                        columns[j].get(i + 3) == player &&
-                        columns[j].get(i + 4) == player) {
+                        columns[j].get(i + 3) == player) {
                     count++;
                 }
             }
         }
+        //System.out.println("v " + count);
 
         // Check diagonally (positive slope)
         for (int i = 0; i <= rows - 4; i++) {
@@ -66,18 +68,20 @@ public class Board {
                 }
             }
         }
+        //System.out.println("p " + count);
 
         // Check diagonally (negative slope)
         for (int i = 0; i <= rows - 4; i++) {
             for (int j = 3; j < cols; j++) {
                 if (columns[j].get(i) == player &&
                         columns[j - 1].get(i + 1) == player &&
-                        columns[j - 1].get(i + 1) == player &&
-                        columns[j - 1].get(i + 1) == player) {
+                        columns[j - 2].get(i + 2) == player &&
+                        columns[j - 3].get(i + 3) == player) {
                     count++;
                 }
             }
         }
+        //System.out.println("n " + count);
 
         return count;
     }
