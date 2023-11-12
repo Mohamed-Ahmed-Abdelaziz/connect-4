@@ -11,9 +11,15 @@ public class Column {
         cells = 0;
         filledCells = 0;
     }
-
+    public Column clone(){
+        Column copy = new Column();
+        copy.cells = this.cells;
+        copy.length = this.length;
+        copy.filledCells = this.filledCells;
+        return copy;
+    }
     public short getCells() {
-        return cells;
+        return this.cells;
     }
 
     public boolean add(int turn){

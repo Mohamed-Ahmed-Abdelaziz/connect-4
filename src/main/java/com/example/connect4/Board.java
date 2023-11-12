@@ -11,8 +11,15 @@ public class Board {
         }
         this.turn = 2;
     }
-
-    public Boolean play(int columnNum){
+    public Board clone(){
+        Board copy = new Board();
+        copy.turn = this.turn;
+        for (int i = 0; i < this.columns.length; i++) {
+            copy.columns[i] = this.columns[i].clone();
+        }
+        return copy;
+    }
+    public boolean play(int columnNum){
         if(columns[columnNum].add(turn)){
             if(turn == 1)
                 turn = 2;
