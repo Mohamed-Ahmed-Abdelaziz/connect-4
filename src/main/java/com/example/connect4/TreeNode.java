@@ -1,31 +1,26 @@
 package com.example.connect4;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class TreeNode {
     State state;
     boolean isMax;
-    TreeNode[] children;
+    List<TreeNode> children;
     TreeNode parent;
 
     public TreeNode(State state, TreeNode parent, boolean isMax) {
         this.state = state;
         this.parent = parent;
         this.isMax = isMax;
+        this.children = new ArrayList<>();
     }
 
-    public TreeNode[] getChildren(){
-        boolean isCreated = false;
-        for (int i = 0; i < children.length; i++) {
-            if(children[i] != null){
-                isCreated = true;
-            }
-        }
-        if(isCreated){
-            return children;
-        }
-        TreeNode[] children = new TreeNode[7];
-        State[] nextStates = this.state.getNeighbours();
-        for (int i = 0; i < 7; i++) {
-            children[i] = new TreeNode(nextStates[i], this, !this.isMax);;
+    public List<TreeNode> getChildren(){
+        List<TreeNode> children = new ArrayList<>();
+        List<State> nextStates = this.state.getNeighbours();
+        for (int i = 0; i < nextStates.size(); i++) {
+            children.add(new TreeNode(nextStates.get(i), this, !this.isMax));
         }
         this.children = children;
         return children;

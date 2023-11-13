@@ -24,6 +24,7 @@ public class Column {
 
     public boolean add(int turn){
         if(filledCells == length || turn < 1 || turn > 2){
+//            System.out.println("False col, turn = " + turn + " len = " + length + " filled = " + filledCells);
             return false;
         }
         short input = (short) (turn << filledCells*2);
@@ -42,5 +43,34 @@ public class Column {
 
     public boolean isFilled(){
         return filledCells == length;
+    }
+    public void print(){
+        System.out.println("Length = " + length);
+        System.out.println("Filled = " + filledCells);
+        System.out.println("Cells = " + cells);
+    }
+
+    public static void main(String[] args) {
+        Column column = new Column();
+        column.print();
+        column.add(1);
+        column.add(2);
+        column.add(1);
+        column.add(2);
+        column.add(1);
+        System.out.println(column.get(0));
+        System.out.println(column.get(1));
+        System.out.println(column.get(2));
+        System.out.println(column.get(3));
+        System.out.println(column.get(4));
+        Column c = column.clone();
+        System.out.println("---------");
+        System.out.println(c.get(0));
+        System.out.println(c.get(1));
+        System.out.println(c.get(2));
+        System.out.println(c.get(3));
+        System.out.println(c.get(4));
+        System.out.println(column + "      " + c);
+
     }
 }

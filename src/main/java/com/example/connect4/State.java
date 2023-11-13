@@ -1,21 +1,36 @@
 package com.example.connect4;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
 public class State {
+    int move;
     Board board;
     int heuristic;
     public State(Board board){
+        this.move = 0;
         this.board = board;
         this.heuristic = evaluateBoard(board, board.turn);
     }
-    public State[] getNeighbours(){
-        State[] neighbours = new State[7];
+
+    public State(int move, Board board) {
+        this.move = move;
+        this.board = board;
+        this.heuristic = evaluateBoard(board, board.turn);
+    }
+
+    public void print(){
+        this.board.printBoard();
+        System.out.println(evaluateBoard(this.board, 1));
+    }
+    public List<State> getNeighbours(){
+        List<State> neighbours = new ArrayList<>();
         for (int i = 0; i < 7; i++) {
             Board next = this.board.clone();
             Boolean isNext = next.play(i);
             if(isNext){
-                neighbours[i] = new State(next);
-            }else {
-                neighbours[i] = null;
+                neighbours.add(new State(i, next));
             }
         }
         return neighbours;
@@ -50,7 +65,7 @@ public class State {
                 score += evaluateLine(board.columns[col].get(row), board.columns[col+1].get(row+1), board.columns[col+2].get(row+2), board.columns[col+3].get(row+3), player);
             }
         }
-
+        heuristic = score;
         return score;
     }
 
@@ -84,5 +99,16 @@ public class State {
         else if (opponentCount == 1 && playerCount == 0) score -= 1;    // Opponent has one in a row
 
         return score;
+    }
+
+    public static void main(String[] args) {
+        Board board = new Board();
+        State state = new State(board);
+        state.board.play(3);
+        state.board.play(2);
+        List<State >states = state.getNeighbours();
+        for (int i = 0; i < states.size(); i++) {
+            states.get(i).print();
+        }
     }
 }
