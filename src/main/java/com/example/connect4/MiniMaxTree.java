@@ -3,14 +3,16 @@ package com.example.connect4;
 import java.util.List;
 
 public class MiniMaxTree {
-    private TreeNode root;
-    private boolean isCalculated;
-    private int depth;
+    TreeNode root;
+    boolean isCalculated;
+    int depth;
+    int bestMove;
     // Constructor
     public MiniMaxTree(State state, int depth) {
         this.depth = depth;
         this.root = new TreeNode(state, null, true);// Assume starting as Max player
         this.isCalculated = false;
+        bestMove = 0;
     }
 
     // MiniMax algorithm
@@ -25,6 +27,9 @@ public class MiniMaxTree {
             int maxEval = Integer.MIN_VALUE;
             for (TreeNode child : node.getChildren()) {
                 int eval = miniMax(child, depth - 1, false).state.heuristic;
+                if (eval >= maxEval){
+                    bestMove = getMoveBetween(child.state.board, node.state.board);
+                }
                 maxEval = Math.max(maxEval, eval);
             }
             node.state.heuristic = maxEval;
@@ -33,12 +38,25 @@ public class MiniMaxTree {
             int minEval = Integer.MAX_VALUE;
             for (TreeNode child : node.getChildren()) {
                 int eval = miniMax(child, depth - 1, true).state.heuristic;
+                if (eval < minEval){
+                    bestMove = getMoveBetween(child.state.board, node.state.board);
+                }
                 minEval = Math.min(minEval, eval);
             }
             node.state.heuristic = minEval;
             return node;
         }
     }
+
+    private int getMoveBetween(Board board, Board board1) {
+        for (int j = 0; j < board.columns.length; j++) {
+            if(board.columns[j].cells != board1.columns[j].cells){
+                return j;
+            }
+        }
+        return -1;
+    }
+
     public int bestMove(){
         if(!isCalculated){
             this.root = miniMax(root, depth, true);
@@ -57,6 +75,7 @@ public class MiniMaxTree {
         }
         return bestMove;
     }
+
     // Method to find the best move using MiniMax
 //    public int findBestMove() {
 //        TreeNode[] children = root.getChildren();

@@ -112,6 +112,15 @@ public class Board {
             System.out.println();
         }
     }
+    public void printBoard(String indent){
+        for(int i = 5; i >= 0; i--){
+            System.out.print(indent);
+            for(int j = 0; j < 7;j++){
+                System.out.print(columns[j].get(i) + " ");
+            }
+            System.out.println();
+        }
+    }
     public  int evaluateBoard(Board board, int player) {
         int score = 0;
 
