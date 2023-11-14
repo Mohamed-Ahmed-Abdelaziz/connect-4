@@ -10,19 +10,25 @@ import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Random;
+import java.util.Scanner;
 
 public class HelloApplication extends Application {
+    Board board = new Board();
+    State state = new State(board);
+    Random random = new Random();
+    Scanner scanner = new Scanner(System.in);
+
     private static final int ROWS = 6;
     private static final int COLUMNS = 7;
-    private int[][] board = new int[ROWS][COLUMNS];
-    private boolean playerTurn = true;
+    private int[][] gameBoard = new int[ROWS][COLUMNS];
+    private static int withPruning;
+    private static int depth;
 
     @Override
     public void start(Stage primaryStage) {
-        initializeBoard();
-
+        boardTransformTo2DArray(board);
         GridPane gridPane = createGameBoard();
-//        addButtons(gridPane);
 
         Scene scene = new Scene(gridPane, 400, 400);
         primaryStage.setTitle("Connect 4 Game");
@@ -30,14 +36,12 @@ public class HelloApplication extends Application {
         primaryStage.show();
     }
 
-    private void initializeBoard() {
-        for (int i = 0; i < ROWS; i++) {
-            for (int j = 0; j < COLUMNS; j++) {
-                board[i][j] = 0;
+    private void boardTransformTo2DArray(Board board){
+        for(int i = 5; i >= 0; i--){
+            for(int j = 0; j < 7;j++){
+                gameBoard[ROWS - 1 - i][j] = board.columns[j].get(i);
             }
         }
-//        board[0][0] = 1;
-//        board[5][6] = 2;
     }
 
     private GridPane createGameBoard() {
@@ -50,20 +54,8 @@ public class HelloApplication extends Application {
         for (int i = 0; i < ROWS; i++) {
             for (int j = 0; j < COLUMNS; j++) {
                 Button cell = new Button();
-
-//                cell.setId(Integer.toString(i) + Integer.toString(j));
-//                cell.getId();
                 cell.setShape(new Circle(1.5));
-                if(board[i][j] == 0)
-                    cell.setStyle("-fx-background-color: grey");
-                else if(board[i][j] == 1)
-                    cell.setStyle("-fx-background-color: orangered");
-                else
-                    cell.setStyle("-fx-background-color: MediumSeaGreen");
-//                cell.setStyle("-fx-background-color: grey");
-//                cell.setStyle("-fx-background-color: MediumSeaGreen");
-//                cell.setStyle("-fx-background-color: orangered");
-//                bt.setMaxSize(3,3);
+                cell.setStyle("-fx-background-color: grey");
                 cell.setMinSize(50, 50);
                 int finalI = i;
                 int finalJ = j;
@@ -76,45 +68,52 @@ public class HelloApplication extends Application {
         return gridPane;
     }
 
-    private void addButtons(GridPane gridPane) {
-        for (int i = 0; i < COLUMNS; i++) {
-            Button button = new Button("Drop");
-            int finalI = i;
-            button.setOnAction(e -> handleDropButtonClick(finalI));
-            gridPane.add(button, i, ROWS);
+    private void handleButtonClick(int row, int col, Button[][] grd){
+        if(board.isFull()) return;
+//        System.out.println("Player number: " + board.turn);
+        int input = col;
+        board.play(input);
+        state.evaluateBoard(board, 1);
+        int x;
+        if(withPruning == 0) {
+            MiniMaxTree tree = new MiniMaxTree(state, depth);
+            x = tree.bestMove();
+        }else {
+            MiniMaxTreeWithPruning tree = new MiniMaxTreeWithPruning(state, depth);
+            x = tree.bestMove();
         }
-    }
+        if(x == -1){
+            System.out.println("No move");
+        }else {
+//            System.out.println("Best Move = " + x);
+            board.play(x);
+            boardTransformTo2DArray(board);
+        }
 
-    private void handleButtonClick(int row, int col, Button[][] grd) {
-//        grd[row][col].setStyle("-fx-background-color: Blue");
-        if(board[0][col] != 0) return;
-        if(playerTurn == true) {
-            for (int i = 5; i >= 0; --i) {
-                if (board[i][col] == 0) {
-                    board[i][col] = 1;
-                    grd[i][col].setStyle("-fx-background-color: orangered");
-                    break;
-                }
-            }
-        }else{
-            for (int i = 5; i >= 0; --i) {
-                if (board[i][col] == 0) {
-                    board[i][col] = 1;
-                    grd[i][col].setStyle("-fx-background-color: MediumSeaGreen");
-                    break;
-                }
+        for (int i = 0; i < ROWS; i++) {
+            for (int j = 0; j < COLUMNS; j++) {
+                if(gameBoard[i][j] == 0)
+                    grd[i][j].setStyle("-fx-background-color: grey");
+                else if(gameBoard[i][j] == 1)
+                    grd[i][j].setStyle("-fx-background-color: orangered");
+                else
+                    grd[i][j].setStyle("-fx-background-color: MediumSeaGreen");
             }
         }
-        playerTurn = !playerTurn;
-        System.out.println("folaaaa");
-//        start(new Stage());
-    }
-
-    private void handleDropButtonClick(int col) {
-
+//        if(board.isFull()){
+            System.out.print("Computer score: ");
+            System.out.println(board.countPoints(1));
+            System.out.print("Player score: ");
+            System.out.println(board.countPoints(2));
+//        }
     }
 
     public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("MinMax without pruning -> 0     ||    MinMax with pruning -> 1");
+        withPruning = scanner.nextInt();
+        System.out.println("Depth of MinMax algorithm: ");
+        depth = scanner.nextInt();
         launch(args);
     }
 }
