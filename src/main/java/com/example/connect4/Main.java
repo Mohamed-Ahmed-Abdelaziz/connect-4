@@ -17,7 +17,7 @@ public class Main {
             }
             board.play(input);
             state.evaluateBoard(board, 1);
-            MiniMaxTree tree = new MiniMaxTree(state, 4);
+            MiniMaxTreeWithPruning tree = new MiniMaxTreeWithPruning(state, 4);
             int x = tree.bestMove();
             if(x == -1){
                 System.out.println("No move");

@@ -62,7 +62,7 @@ public class MiniMaxTreeWithPruning {
 //        // Populate the children list with new TreeNode instances
 //        return children;
 //    }
-    public int findBestMove() {
+    public int bestMove() {
 //        if(!isCalculated){
 //            this.root = miniMax(root, depth, true);
 //        }
@@ -120,7 +120,7 @@ public class MiniMaxTreeWithPruning {
             board.play(input);
             state.evaluateBoard(board, 1);
             MiniMaxTreeWithPruning miniMaxTree = new MiniMaxTreeWithPruning(state, 4);
-            int x = miniMaxTree.findBestMove();
+            int x = miniMaxTree.bestMove();
             if(x == -1){
                 System.out.println("No move");
             }else {
