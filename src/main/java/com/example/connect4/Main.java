@@ -6,12 +6,12 @@ import java.util.Scanner;
 public class Main {
     public static void print(TreeNode node, String indent){
 //        node.state.board.printBoard(indent);
-        System.out.println(indent + "eval = " +node.state.heuristic + ", isCut = " + node.isCut);
+        System.out.println(indent + "eval = " +node.state.heuristic + ", isPruned = " + node.isCut);
     }
     public static void printTree(TreeNode node, int k){
         String indent = "";
         for (int i = 0; i < k; i++) {
-            indent += " ";
+            indent += "   ";
         }
         if (node == null){
             return;
@@ -29,22 +29,22 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
 
 //        Test No pruning: success
-        board.play(2);
+//        board.play(2);
 //        board.play(3);
 //        board.play(2);
-        MiniMaxTree tree = new MiniMaxTree(state, 3);
-        TreeNode node = tree.miniMax(tree.root, 3, true);
-        printTree(node,0);
-        System.out.println("Best = " + tree.bestMove());
+//        MiniMaxTree tree = new MiniMaxTree(state, 3);
+//        TreeNode node = tree.miniMax(tree.root, 3, true);
+//        printTree(node,0);
+//        System.out.println("Best = " + tree.bestMove());
 
 //        Test Pruning: success
 //        board.play(2);
 //        board.play(3);
-//        board.play(2);
-//        MiniMaxTreeWithPruning tree = new MiniMaxTreeWithPruning(state, 2);
-//        TreeNode node = tree.miniMax(tree.root, 2,Integer.MIN_VALUE,Integer.MAX_VALUE, true);
-//        printTree(node,0);
-//        System.out.println("Best = " + tree.bestMove());
+        board.play(2);
+        MiniMaxTreeWithPruning tree = new MiniMaxTreeWithPruning(state, 2);
+        TreeNode node = tree.miniMax(tree.root, 2,Integer.MIN_VALUE,Integer.MAX_VALUE, true);
+        printTree(node,0);
+        System.out.println("Best = " + tree.bestMove());
 
 //        while (!board.isFull()){
 //            System.out.println("Turn = " + board.turn);

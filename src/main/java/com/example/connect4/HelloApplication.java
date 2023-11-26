@@ -43,7 +43,23 @@ public class HelloApplication extends Application {
             }
         }
     }
-
+    public static void print(TreeNode node, String indent){
+//        node.state.board.printBoard(indent);
+        System.out.println(indent + "eval = " +node.state.heuristic + ", isPruned = " + node.isCut);
+    }
+    public static void printTree(TreeNode node, int k){
+        String indent = "";
+        for (int i = 0; i < k; i++) {
+            indent += "   ";
+        }
+        if (node == null){
+            return;
+        }
+        print(node, indent);
+        for (int i = 0; i < node.children.size(); i++) {
+            printTree(node.children.get(i), k + 1);
+        }
+    }
     private GridPane createGameBoard() {
         GridPane gridPane = new GridPane();
         gridPane.setAlignment(Pos.CENTER);
@@ -72,6 +88,7 @@ public class HelloApplication extends Application {
         if(board.isFull()) return;
 //        System.out.println("Player number: " + board.turn);
         int input = col;
+        TreeNode node;
         if(!board.play(input)){
             return;
         }
@@ -79,11 +96,11 @@ public class HelloApplication extends Application {
         int x;
         if(withPruning == 0) {
             MiniMaxTree tree = new MiniMaxTree(state, depth);
-            TreeNode node = tree.miniMax(tree.root, depth, true);
+            node = tree.miniMax(tree.root, depth, true);
             x = tree.bestMove();
         }else {
             MiniMaxTreeWithPruning tree = new MiniMaxTreeWithPruning(state, depth);
-            TreeNode node = tree.miniMax(tree.root, depth, Integer.MIN_VALUE, Integer.MAX_VALUE, true);
+            node = tree.miniMax(tree.root, depth, Integer.MIN_VALUE, Integer.MAX_VALUE, true);
             x = tree.bestMove();
         }
         if(x == -1){
@@ -104,11 +121,15 @@ public class HelloApplication extends Application {
                     grd[i][j].setStyle("-fx-background-color: MediumSeaGreen");
             }
         }
+
 //        if(board.isFull()){
+
             System.out.print("Computer score: ");
             System.out.println(board.countPoints(1));
             System.out.print("Player score: ");
             System.out.println(board.countPoints(2));
+            printTree(node,0);
+        System.out.println();
 //        }
     }
 
@@ -119,6 +140,5 @@ public class HelloApplication extends Application {
         System.out.println("Depth of MinMax algorithm: ");
         depth = scanner.nextInt();
         launch(args);
-
     }
 }
