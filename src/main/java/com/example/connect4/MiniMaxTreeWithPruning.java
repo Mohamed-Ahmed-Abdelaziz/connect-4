@@ -6,49 +6,95 @@ import java.util.Scanner;
 
 public class MiniMaxTreeWithPruning {
 
-    private TreeNode root;
+    TreeNode root;
     int depth;
     boolean isCalculated;
+    int bestMove;
     public MiniMaxTreeWithPruning(State state, int depth) {
         this.root = new TreeNode(state,null, true);
         this.depth = depth;
         this.isCalculated = false;
+        bestMove = 0;
     }
 
     public TreeNode miniMax(TreeNode node, int depth, int alpha, int beta, boolean maximizingPlayer) {
-        isCalculated = true;
         if (depth == 0 || node.state.board.isFull()) {
             node.state.heuristic = node.state.evaluateBoard(node.state.board, node.state.board.turn);
             return node; // Evaluate the heuristic value for the current state
         }
 
         if (maximizingPlayer) {
+            int startCut = 0;
+            boolean thereIsCut = false;
             int maxEval = Integer.MIN_VALUE;
             for (TreeNode child : node.getChildren()) {
+                startCut++;
                 int eval = miniMax(child, depth - 1, alpha, beta, false).state.heuristic;
+//                if (eval >= maxEval){
+//                    bestMove = getMoveBetween(child.state.board, node.state.board);
+//                }
                 maxEval = Math.max(maxEval, eval);
-                alpha = Math.max(alpha, eval);
-                if (beta <= alpha) {
-                    break; // Beta cut-off
+                if(maxEval >= beta){
+                    thereIsCut = true;
+                    break;
                 }
+                alpha = Math.max(alpha, eval);
             }
             node.state.heuristic = maxEval;
+            if(thereIsCut){
+                for (int i = startCut; i < node.children.size(); i++) {
+                    node.children.get(i).isCut = true;
+                }
+            }
             return node;
         } else {
             int minEval = Integer.MAX_VALUE;
+            int startCut = 0;
+            boolean thereIsCut = false;
             for (TreeNode child : node.getChildren()) {
+                startCut++;
                 int eval = miniMax(child, depth - 1, alpha, beta, true).state.heuristic;
+//                if (eval < minEval){
+//                    bestMove = getMoveBetween(child.state.board, node.state.board);
+//                }
                 minEval = Math.min(minEval, eval);
-                beta = Math.min(beta, eval);
-                if (beta <= alpha) {
-                    break; // Alpha cut-off
+                if(minEval <= alpha){
+                    thereIsCut = true;
+                    break;
                 }
+                beta = Math.min(beta, eval);
+//                if (beta <= alpha) {
+//                    break; // Alpha cut-off
+//                }
             }
             node.state.heuristic = minEval;
+            if(thereIsCut){
+                for (int i = startCut; i < node.children.size(); i++) {
+                    node.children.get(i).isCut = true;
+                }
+            }
             return node;
         }
     }
-
+    private int getMoveBetween(Board board, Board board1) {
+        for (int j = 0; j < board.columns.length; j++) {
+            if(board.columns[j].cells != board1.columns[j].cells){
+                return j;
+            }
+        }
+        return -1;
+    }
+    public int bestMove(){
+        int rootEval = root.state.heuristic;
+        int i = 0;
+        for (int j = 0; j < root.children.size(); j++) {
+            if(rootEval == root.children.get(j).state.heuristic){
+                i = j;
+                break;
+            }
+        }
+        return getMoveBetween(root.state.board, root.children.get(i).state.board);
+    }
 //    private List<TreeNode> generateChildren(TreeNode node) {
 //        List<TreeNode> children = new ArrayList<>();
 //        for (int i = 0; i < 7; i++) {
@@ -62,31 +108,31 @@ public class MiniMaxTreeWithPruning {
 //        // Populate the children list with new TreeNode instances
 //        return children;
 //    }
-    public int bestMove() {
-//        if(!isCalculated){
-//            this.root = miniMax(root, depth, true);
+//    public int bestMove() {
+////        if(!isCalculated){
+////            this.root = miniMax(root, depth, true);
+////        }
+//        List<TreeNode> children = root.getChildren();
+//        int bestMove = -1;
+//        int bestValue = Integer.MIN_VALUE;
+//        int alpha = Integer.MIN_VALUE;
+//        int beta = Integer.MAX_VALUE;
+//
+//        for (int i = 0; i < children.size(); i++) {
+//            TreeNode child = children.get(i);
+//            int currentValue = miniMax(child, this.depth, alpha, beta, false).state.heuristic;
+//            if (currentValue > bestValue) {
+//                bestValue = currentValue;
+//                bestMove = children.get(i).state.move;
+//            }
+//            alpha = Math.max(alpha, bestValue);
+//            if (beta <= alpha) {
+//                break; // Beta cut-off
+//            }
 //        }
-        List<TreeNode> children = root.getChildren();
-        int bestMove = -1;
-        int bestValue = Integer.MIN_VALUE;
-        int alpha = Integer.MIN_VALUE;
-        int beta = Integer.MAX_VALUE;
-
-        for (int i = 0; i < children.size(); i++) {
-            TreeNode child = children.get(i);
-            int currentValue = miniMax(child, this.depth, alpha, beta, false).state.heuristic;
-            if (currentValue > bestValue) {
-                bestValue = currentValue;
-                bestMove = children.get(i).state.move;
-            }
-            alpha = Math.max(alpha, bestValue);
-            if (beta <= alpha) {
-                break; // Beta cut-off
-            }
-        }
-
-        return bestMove;
-    }
+//
+//        return bestMove;
+//    }
 
 //    public int findBestMove() {
 //        List<TreeNode> children = generateChildren(root);
@@ -120,7 +166,7 @@ public class MiniMaxTreeWithPruning {
             board.play(input);
             state.evaluateBoard(board, 1);
             MiniMaxTreeWithPruning miniMaxTree = new MiniMaxTreeWithPruning(state, 4);
-            int x = miniMaxTree.bestMove();
+            int x = miniMaxTree.bestMove;
             if(x == -1){
                 System.out.println("No move");
             }else {

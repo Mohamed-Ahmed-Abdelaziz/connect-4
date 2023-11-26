@@ -23,7 +23,7 @@ public class HelloApplication extends Application {
     private static final int COLUMNS = 7;
     private int[][] gameBoard = new int[ROWS][COLUMNS];
     private static int withPruning;
-    private static int depth;
+    private static int depth = 2;
 
     @Override
     public void start(Stage primaryStage) {
@@ -72,14 +72,18 @@ public class HelloApplication extends Application {
         if(board.isFull()) return;
 //        System.out.println("Player number: " + board.turn);
         int input = col;
-        board.play(input);
-        state.evaluateBoard(board, 1);
+        if(!board.play(input)){
+            return;
+        }
+//        state.evaluateBoard(board, 1);
         int x;
         if(withPruning == 0) {
             MiniMaxTree tree = new MiniMaxTree(state, depth);
+            TreeNode node = tree.miniMax(tree.root, depth, true);
             x = tree.bestMove();
         }else {
             MiniMaxTreeWithPruning tree = new MiniMaxTreeWithPruning(state, depth);
+            TreeNode node = tree.miniMax(tree.root, depth, Integer.MIN_VALUE, Integer.MAX_VALUE, true);
             x = tree.bestMove();
         }
         if(x == -1){
@@ -115,5 +119,6 @@ public class HelloApplication extends Application {
         System.out.println("Depth of MinMax algorithm: ");
         depth = scanner.nextInt();
         launch(args);
+
     }
 }

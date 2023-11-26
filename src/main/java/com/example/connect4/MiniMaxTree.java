@@ -27,9 +27,9 @@ public class MiniMaxTree {
             int maxEval = Integer.MIN_VALUE;
             for (TreeNode child : node.getChildren()) {
                 int eval = miniMax(child, depth - 1, false).state.heuristic;
-                if (eval >= maxEval){
-                    bestMove = getMoveBetween(child.state.board, node.state.board);
-                }
+//                if (eval >= maxEval){
+//                    bestMove = getMoveBetween(child.state.board, node.state.board);
+//                }
                 maxEval = Math.max(maxEval, eval);
             }
             node.state.heuristic = maxEval;
@@ -38,9 +38,9 @@ public class MiniMaxTree {
             int minEval = Integer.MAX_VALUE;
             for (TreeNode child : node.getChildren()) {
                 int eval = miniMax(child, depth - 1, true).state.heuristic;
-                if (eval < minEval){
-                    bestMove = getMoveBetween(child.state.board, node.state.board);
-                }
+//                if (eval < minEval){
+//                    bestMove = getMoveBetween(child.state.board, node.state.board);
+//                }
                 minEval = Math.min(minEval, eval);
             }
             node.state.heuristic = minEval;
@@ -58,22 +58,19 @@ public class MiniMaxTree {
     }
 
     public int bestMove(){
-        if(!isCalculated){
-            this.root = miniMax(root, depth, true);
-        }
-        List<TreeNode> children = root.getChildren();
-        int bestMove = -1;
-        int bestValue = Integer.MIN_VALUE;
-
-        for (int i = 0; i < children.size(); i++) {
-            int currentValue = miniMax(children.get(i), this.depth, false).state.heuristic;
-            if (currentValue > bestValue) {
-                bestValue = currentValue;
-                //Comment
-                bestMove = children.get(i).state.move;
+        int rootEval = root.state.heuristic;
+        int i = 0;
+        for (int j = 0; j < root.children.size(); j++) {
+            if(root.children.get(j).isCut){
+                break;
+            }
+            if(rootEval == root.children.get(j).state.heuristic){
+                i = j;
+                break;
             }
         }
-        return bestMove;
+        return getMoveBetween(root.state.board, root.children.get(i).state.board);
+
     }
 
     // Method to find the best move using MiniMax
