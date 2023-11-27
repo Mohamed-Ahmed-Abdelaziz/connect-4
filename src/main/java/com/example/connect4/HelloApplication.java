@@ -5,6 +5,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.Separator;
 import javafx.scene.layout.GridPane;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
@@ -66,6 +68,10 @@ public class HelloApplication extends Application {
         gridPane.setHgap(5);
         gridPane.setVgap(5);
         Button[][] grd = new Button[6][7];
+        Label label = new Label("Computer\nScore: 0");
+        gridPane.add(label, 0, ROWS+1);
+        Label label2 = new Label("Player\nScore: 0");
+        gridPane.add(label2, 1, ROWS+1);
 
         for (int i = 0; i < ROWS; i++) {
             for (int j = 0; j < COLUMNS; j++) {
@@ -75,16 +81,20 @@ public class HelloApplication extends Application {
                 cell.setMinSize(50, 50);
                 int finalI = i;
                 int finalJ = j;
-                cell.setOnAction(e -> handleButtonClick(finalI, finalJ, grd));
+                cell.setOnAction(e -> handleButtonClick(finalI, finalJ, grd, label, label2));
 
                 grd[i][j] = cell;
                 gridPane.add(cell, j, i);
             }
         }
+        for (int j = 0; j < COLUMNS; j++) {
+            Separator separator = new Separator();
+            gridPane.add(separator, j, ROWS);
+        }
         return gridPane;
     }
 
-    private void handleButtonClick(int row, int col, Button[][] grd){
+    private void handleButtonClick(int row, int col, Button[][] grd, Label label1, Label label2){
         if(board.isFull()) return;
 //        System.out.println("Player number: " + board.turn);
         int input = col;
@@ -121,16 +131,10 @@ public class HelloApplication extends Application {
                     grd[i][j].setStyle("-fx-background-color: MediumSeaGreen");
             }
         }
-
-//        if(board.isFull()){
-
-            System.out.print("Computer score: ");
-            System.out.println(board.countPoints(1));
-            System.out.print("Player score: ");
-            System.out.println(board.countPoints(2));
-            printTree(node,0);
+        label1.setText("Computer\nScore: " + board.countPoints(1));
+        label2.setText("Player\nScore: " + board.countPoints(2));
+        printTree(node,0);
         System.out.println();
-//        }
     }
 
     public static void main(String[] args) {
