@@ -9,7 +9,7 @@ two players keep playing until the board is full. The winner is the player havin
 number of connected-fours.
 
 ## Algorithms
-• Minimax without alpha-beta pruning
+• Minimax without alpha-beta pruning  
 • Minimax with alpha-beta pruning
 
 ## Contributors
